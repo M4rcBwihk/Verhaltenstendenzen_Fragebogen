@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Farbanteile – Selbstcheck</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--text:#18202a;--muted:#657080;--line:#dfe4ea;--d:#d94a4a;--i:#e4b329;--s:#42a66a;--g:#4a78c2}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.wrap{max-width:980px;margin:auto;padding:28px 18px 60px}.card{background:var(--card);border-radius:16px;padding:26px;box-shadow:0 5px 24px #00000012;margin-bottom:18px}
+h1{font-size:2rem;margin:.1em 0 .4em} h2{margin-top:.2em} h3{margin-bottom:.35em}.lead{font-size:1.08rem}.muted{color:var(--muted)}
+button{border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}.primary{background:#17212b;color:white}.secondary{background:#e9edf2;color:#17212b}
+.q{padding:18px 0;border-bottom:1px solid var(--line)}.q:last-child{border-bottom:0}.qnum{font-size:.85rem;color:var(--muted);font-weight:bold}.qtext{font-size:1.05rem;margin:4px 0 12px}
+.answers{display:flex;gap:10px}.answers label{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-align:center;cursor:pointer}.answers input{margin-right:7px}
+.progress{height:9px;background:#e5e9ee;border-radius:9px;overflow:hidden;margin:16px 0}.progress>div{height:100%;background:#17212b;width:0}
+.hidden{display:none}.bars{display:grid;gap:12px}.barrow{display:grid;grid-template-columns:155px 1fr 62px;gap:10px;align-items:center}.bar{height:18px;background:#e8ebef;border-radius:10px;overflow:hidden}.fill{height:100%}
+.pill{display:inline-block;padding:4px 9px;border-radius:999px;color:white;font-size:.82rem;font-weight:bold;margin-right:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.type{border:1px solid var(--line);border-radius:14px;padding:18px}.type p{margin:.45em 0}.callout{background:#f3f6fa;border-left:4px solid #17212b;padding:14px 16px;border-radius:8px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.barrow{grid-template-columns:105px 1fr 52px}.card{padding:19px}h1{font-size:1.65rem}}
+@media print{body{background:#fff}.wrap{max-width:none}.card{box-shadow:none;border:1px solid #ddd}.no-print{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section id="intro" class="card">
+<h1>Verhaltenstendenzen des Persönlichkeitsmodells - Fragebogen</h1>
+<p class="lead">Dieser Selbstcheck hilft dir, vier farblich dargestellte Verhaltenstendenzen bei dir selbst zu reflektieren: <b>Rot</b>, <b>Gelb</b>, <b>Grün</b> und <b>Blau</b>.</p>
+<p>Beantworte jede Aussage spontan mit <b>Ja</b> oder <b>Nein</b>. Es gibt keine guten oder schlechten Ergebnisse und keine Farbe ist besser oder schlechter als eine andere. Menschen können Anteile aller vier Farben zeigen und sich je nach Situation unterschiedlich verhalten.</p>
+<div class="callout"><b>Besonders interessant ist der Blick auf die Farben, die bei dir weniger stark ausgeprägt sind.</b> Bedürfnisse und Verhaltensweisen, die für dich selbst weniger wichtig oder selbstverständlich sind, können für andere Menschen eine große Bedeutung haben. Wenn du diese Unterschiede erkennst, kannst du die Bedürfnisse anderer bewusster wahrnehmen, anerkennen und deine Kommunikation besser darauf abstimmen.</div>
+<p>Schau deshalb am Ende nicht nur auf die Frage <b>„Welche Farbe ist bei mir besonders stark?“</b>, sondern auch auf: <b>„Welche Farbe bringe ich weniger mit – und was kann ich daraus über die Bedürfnisse anderer lernen?“</b></p>
+<p>Das Ziel ist nicht, Menschen in vier Schubladen einzuteilen. Der Selbstcheck soll einen Perspektivwechsel ermöglichen: <b>Was brauche ich selbst – und was könnten Menschen brauchen, die anders ticken als ich?</b></p>
+<p class="muted">Der Selbstcheck ist ein Lern- und Reflexionsinstrument für Schulungen. Er ist kein psychologischer Test und keine Diagnose.</p>
+<p><button class="primary" onclick="startQuiz()">Selbstcheck starten</button></p>
+</section>
+
+<section id="quiz" class="card hidden">
+<h2>Selbsteinschätzung</h2>
+<p class="muted">Antworte danach, was im Allgemeinen eher auf dich zutrifft – nicht danach, was „richtig“ wäre.</p>
+<div class="progress"><div id="prog"></div></div>
+<div id="questions"></div>
+<p id="warning" style="color:#a22;font-weight:bold"></p>
+<button class="primary" onclick="evaluateQuiz()">Ergebnis anzeigen</button>
+</section>
+
+<section id="result" class="hidden">
+<div class="card">
+<h2>Dein persönliches Tendenzprofil</h2>
+<p>Die Prozentwerte zeigen dein <b>relatives Farbprofil innerhalb dieses Selbstchecks</b>. Da die Farben unterschiedlich viele Aussagen enthalten können, wird jede Farbe zunächst an ihrer eigenen maximal möglichen Punktzahl gemessen. Erst danach werden die vier Werte zu einem Profil von insgesamt 100 % zusammengeführt. Die Werte sind keine Messung deiner Persönlichkeit.</p>
+<div class="bars" id="bars"></div>
+<div id="summary" style="margin-top:22px"></div>
+<p class="no-print"><button class="secondary" onclick="window.print()">Ergebnis drucken / als PDF speichern</button> <button class="secondary" onclick="location.reload()">Neu starten</button></p>
+</div>
+<div class="card">
+<h2>Was dein Profil für Lernen und Zusammenarbeit bedeuten kann</h2>
+<div id="personal"></div>
+</div>
+<div class="card">
+<h2>Die anderen verstehen</h2>
+<p>Der wichtigste Lernschritt beginnt nach der Selbsteinschätzung: Was dir Sicherheit, Motivation oder Orientierung gibt, muss bei anderen Menschen nicht dieselbe Wirkung haben. Die vier Tendenzen helfen dabei, Verhalten nicht vorschnell als „schwierig“ zu bewerten.</p>
+<div class="grid" id="alltypes"></div>
+</div>
+<div class="card">
+<h2>Transfer in die Praxis</h2>
+<p>Überlege nach dem Ergebnis: <b>Welche Bedürfnisse bringe ich selbst in eine Gruppe ein?</b> Welche Verhaltensweisen anderer irritieren mich möglicherweise gerade deshalb? Und wie kann ich meine Kommunikation so anpassen, dass auch Menschen mit anderen Bedürfnissen gut lernen und mitarbeiten können?</p>
+<div class="callout">Für Trainer:innen und Koordinator:innen gilt: Die Tendenzen sollen Beobachtung und Perspektivwechsel unterstützen. Sie sollten niemals dazu verwendet werden, Teilnehmende dauerhaft zu etikettieren oder Verhalten allein mit einer „Farbe“ zu erklären.</div>
+</div>
+</section>
+</div>
+
+<script>
+const questions = [
+ [
+  "D",
+  "Ich mag Menschen, die gleich zur Sache kommen und direkt sind."
+ ],
+ [
+  "D",
+  "Ich treffe gerne schnelle Entscheidungen."
+ ],
+ [
+  "D",
+  "Ich liebe Herausforderungen und packe Probleme aktiv an."
+ ],
+ [
+  "D",
+  "Ich erkenne schnell das Wesentliche."
+ ],
+ [
+  "D",
+  "Ich ziele auf Ergebnisse und setze mir Ziele."
+ ],
+ [
+  "D",
+  "Ich weiß, was ich will, und setze mich auch dafür ein."
+ ],
+ [
+  "D",
+  "Ich übernehme gerne das Kommando und habe gerne die Kontrolle."
+ ],
+ [
+  "D",
+  "Ich mag Veränderung und Abwechslung."
+ ],
+ [
+  "D",
+  "Ich mag Neues, Besonderes und hebe mich gerne ab."
+ ],
+ [
+  "D",
+  "Ich liebe Wettbewerb und Risiko."
+ ],
+ [
+  "D",
+  "Ich kann gut Nein sagen."
+ ],
+ [
+  "D",
+  "Ich mag meine Unabhängigkeit."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, wenn Menschen zu viel reden."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, unterhalten zu werden."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, Anweisungen zu bekommen."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, mich um Details zu kümmern."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, unterfordert zu sein."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, mich zu viel zu organisieren."
+ ],
+ [
+  "D",
+  "Ich mag es nicht, auf andere angewiesen zu sein."
+ ],
+ [
+  "I",
+  "Ich mag Menschen, die Zeit zum Reden haben, Kontakt suchen und freundlich sind."
+ ],
+ [
+  "I",
+  "Ich unterhalte gerne andere und bin ein perfekter Smalltalker."
+ ],
+ [
+  "I",
+  "Ich arbeite gerne in einer Gruppe."
+ ],
+ [
+  "I",
+  "Ich bin spontan und liebe die Abwechslung, springe gerne in Themen."
+ ],
+ [
+  "I",
+  "Ich schaffe Atmosphäre, bin begeistert und begeistere andere."
+ ],
+ [
+  "I",
+  "Ich bin eher optimistisch."
+ ],
+ [
+  "I",
+  "Ich stehe gerne im Mittelpunkt."
+ ],
+ [
+  "I",
+  "Ich bin verbal sehr versiert und drücke mich klar aus."
+ ],
+ [
+  "I",
+  "Ich kann Gefühle gut und offen mitteilen."
+ ],
+ [
+  "I",
+  "Ich mag es nicht, wenn Menschen unhöflich und distanziert sind."
+ ],
+ [
+  "I",
+  "Ich mag es nicht, wenn Menschen sich zurückhalten und kühl wirken."
+ ],
+ [
+  "I",
+  "Ich mag es nicht, mich um zu viele Details und Routinen zu kümmern."
+ ],
+ [
+  "I",
+  "Ich mag es nicht, kontrolliert zu werden."
+ ],
+ [
+  "I",
+  "Ich mag es nicht, eine zu sachliche Atmosphäre und zu viele Zahlen und Fakten zu haben."
+ ],
+ [
+  "S",
+  "Ich mag Menschen, die in Gesprächen das Persönlich-Menschliche betonen."
+ ],
+ [
+  "S",
+  "Ich liebe eine gute, lockere Gesprächsatmosphäre."
+ ],
+ [
+  "S",
+  "Ich möchte gehört werden mit dem, was mir wichtig ist."
+ ],
+ [
+  "S",
+  "Ich will echte ernsthafte Wertschätzung und Anerkennung erfahren."
+ ],
+ [
+  "S",
+  "Ich helfe gerne anderen."
+ ],
+ [
+  "S",
+  "Ich mag es, mit Menschen zu arbeiten, die gut miteinander auskommen."
+ ],
+ [
+  "S",
+  "Ich mag ein stabiles und organisiertes Umfeld."
+ ],
+ [
+  "S",
+  "Ich mag es, Teil von etwas zu sein, anstatt zu führen."
+ ],
+ [
+  "S",
+  "Ich bin ein guter Zuhörer und vermittle zwischen Menschen."
+ ],
+ [
+  "S",
+  "Ich erledige Aufgaben zuverlässig und kann mich darauf konzentrieren."
+ ],
+ [
+  "S",
+  "Ich entwickle spezialisiertes Können, ohne dies besonders hervorzuheben."
+ ],
+ [
+  "S",
+  "Ich will Dinge in Ruhe und Stück für Stück erledigen."
+ ],
+ [
+  "S",
+  "Ich mag meine Unabhängigkeit."
+ ],
+ [
+  "S",
+  "Ich mag es nicht, wenn Menschen keine Rücksicht nehmen."
+ ],
+ [
+  "S",
+  "Ich mag Veränderungen nicht, bevor ich mich damit arrangiert habe."
+ ],
+ [
+  "S",
+  "Ich mag Veränderungen ohne Begründung nicht."
+ ],
+ [
+  "S",
+  "Ich mag es nicht, wenn Menschen zu sehr auf Ergebnisse drängen."
+ ],
+ [
+  "S",
+  "Ich mag Konfliktsituationen allgemein und insbesondere die Notwendigkeit, diese aktiv lösen zu müssen, nicht."
+ ],
+ [
+  "S",
+  "Ich mag unklare oder unstrukturierte und unvorhersehbare (Arbeits-)Situationen nicht."
+ ],
+ [
+  "G",
+  "Ich mag Menschen, die ruhig und höflich sind und sich diplomatisch verhalten."
+ ],
+ [
+  "G",
+  "Ich mag Menschen, die Dinge tun, die sinnvoll sind."
+ ],
+ [
+  "G",
+  "Ich bevorzuge eine sachlich-höfliche Atmosphäre."
+ ],
+ [
+  "G",
+  "Ich liebe es, klar zu denken, und mag Menschen, die dies auch tun."
+ ],
+ [
+  "G",
+  "Ich mag Zahlen und Fakten."
+ ],
+ [
+  "G",
+  "Ich wäge Dinge in Ruhe anhand von Fakten ab und bin objektiver als andere."
+ ],
+ [
+  "G",
+  "Ich mag es, Dinge in Ruhe zu tun."
+ ],
+ [
+  "G",
+  "Ich beziehe mich gerne auf Bewährtes."
+ ],
+ [
+  "G",
+  "Ich mag klar definierte Vorgaben und Erwartungen."
+ ],
+ [
+  "G",
+  "Ich habe hohe Qualitätsansprüche und arbeite gern mit Menschen, die diese auch haben."
+ ],
+ [
+  "G",
+  "Ich liebe es, Dingen auf den Grund zu gehen und diese gründlich zu analysieren."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, wenn andere spontane Gefühlsregungen erwarten."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, halb fertige Aufgaben abliefern zu müssen oder zu bekommen."
+ ],
+ [
+  "G",
+  "Ich mag oberflächliches Arbeiten und Reden nicht."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, im Gespräch von hier nach dort zu springen."
+ ],
+ [
+  "G",
+  "Ich mag zu allgemeine Aussagen nicht."
+ ],
+ [
+  "G",
+  "Ich mag Reden um des Redens willen, ohne Qualitätsanspruch, nicht."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, für Fehler haftbar gemacht und kritisiert zu werden."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, wenn andere zu optimistisch reagieren."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, wenn Menschen wenig kalkulierbar sind."
+ ],
+ [
+  "G",
+  "Ich mag es nicht, schnelle Entscheidungen treffen zu müssen, wenn Dinge noch neu beziehungsweise unbekannt sind."
+ ]
+];
+
+const info = {
+D:{name:"Rot",color:"var(--d)",mot:"Ergebnisse, Wirksamkeit, Herausforderung, Entscheidungs- und Handlungsspielraum",need:"klare Ziele, Tempo, Autonomie, direkte Kommunikation und sichtbaren Fortschritt",fear:"Kontrollverlust, Abhängigkeit, Stillstand oder als handlungsunfähig erlebt zu werden",frust:"lange Umwege, Unentschlossenheit, unnötige Regeln, langsame Prozesse und Diskussionen ohne Ergebnis",learn:"Komm schnell zum Punkt, benenne Ziel und Nutzen und gib – wo möglich – Wahl- oder Handlungsspielraum.",strength:"Entschlossenheit, Ergebnisorientierung, Mut zu Entscheidungen und Bereitschaft, Verantwortung zu übernehmen."},
+I:{name:"Gelb",color:"var(--i)",mot:"Kontakt, Anerkennung, Austausch, Begeisterung, neue Ideen und sichtbare Resonanz",need:"Interaktion, persönliche Ansprache, Möglichkeiten zum Mitreden und Raum für Kreativität",fear:"Ablehnung, soziale Isolation, fehlende Resonanz oder in einer starren, unpersönlichen Situation festzustecken",frust:"zu wenig Austausch, monotone Abläufe, starke Detailorientierung ohne erkennbaren Sinn und eine sehr distanzierte Atmosphäre",learn:"Schaffe Austausch, lasse Ideen zu und verbinde Inhalte mit Geschichten, Beispielen und gemeinsamer Aktivität.",strength:"Begeisterungsfähigkeit, Kontaktstärke, Spontaneität, Optimismus und die Fähigkeit, andere mitzunehmen."},
+S:{name:"Grün",color:"var(--s)",mot:"Verlässlichkeit, Zugehörigkeit, Kooperation, Stabilität und ein respektvolles Miteinander",need:"Orientierung, Vertrauen, ausreichend Zeit für Veränderungen und eine wertschätzende Atmosphäre",fear:"plötzliche Veränderungen, Verlust von Sicherheit oder Zugehörigkeit sowie eskalierende Konflikte",frust:"Hektik, überraschender Druck, häufig wechselnde Anforderungen, aggressive Kommunikation und unnötige Konfrontation",learn:"Gib Orientierung, kündige Veränderungen an, lasse Zeit zum Nachdenken und schaffe Beteiligungsmöglichkeiten ohne unnötigen Druck.",strength:"Geduld, Verlässlichkeit, Zuhören, Teamorientierung und die Fähigkeit, Beziehungen langfristig zu stabilisieren."},
+G:{name:"Blau",color:"var(--g)",mot:"Qualität, Genauigkeit, Logik, Kompetenz, nachvollziehbare Informationen und gute Lösungen",need:"klare Erwartungen, belastbare Informationen, Struktur, Zeit zum Prüfen und sachliche Begründungen",fear:"Fehler, unzureichende Qualität, unklare Anforderungen oder Entscheidungen auf einer unsicheren Informationsbasis",frust:"Ungenauigkeit, Widersprüche, vermeidbare Fehler, fehlende Fakten und vorschnelle Entscheidungen",learn:"Erkläre Hintergründe und Kriterien, strukturiere Informationen sauber und ermögliche Rückfragen sowie sorgfältige Vorbereitung.",strength:"Sorgfalt, analytisches Denken, Qualitätsbewusstsein, Struktur und ein ausgeprägter Blick für Details."}
+};
+
+function startQuiz(){document.getElementById("intro").classList.add("hidden");document.getElementById("quiz").classList.remove("hidden");renderQuestions();window.scrollTo(0,0)}
+function renderQuestions(){
+ let out="";
+ questions.forEach((q,i)=>{out+=`<div class="q"><div class="qnum">Aussage ${i+1} von ${questions.length}</div><div class="qtext">${q[1]}</div><div class="answers">
+ <label><input type="radio" name="q${i}" value="1" onchange="progress()"> Ja</label>
+ <label><input type="radio" name="q${i}" value="0" onchange="progress()"> Nein</label></div></div>`});
+ document.getElementById("questions").innerHTML=out;
+}
+function progress(){
+ let n=0; questions.forEach((q,i)=>{if(document.querySelector(`input[name=q${i}]:checked`))n++});
+ document.getElementById("prog").style.width=(n/questions.length*100)+"%";
+}
+function evaluateQuiz(){
+ let scores={D:0,I:0,S:0,G:0}, maxima={D:0,I:0,S:0,G:0}, answered=0;
+ questions.forEach((q,i)=>{
+   maxima[q[0]]++;
+   let e=document.querySelector(`input[name=q${i}]:checked`);
+   if(e){answered++; if(e.value==="1")scores[q[0]]++}
+ });
+ if(answered<questions.length){
+   document.getElementById("warning").textContent=`Bitte beantworte noch ${questions.length-answered} Aussage(n).`;
+   return;
+ }
+ // First calculate each color independently as share of its own possible YES points.
+ // This prevents colors with more questions from receiving more weight.
+ let rates={};
+ Object.keys(scores).forEach(k=>rates[k]=maxima[k] ? scores[k]/maxima[k] : 0);
+ let rateTotal=Object.values(rates).reduce((a,b)=>a+b,0);
+ let pct={};
+ if(rateTotal===0){
+   pct={D:25,I:25,S:25,G:25};
+ } else {
+   let raw={};
+   Object.keys(rates).forEach(k=>raw[k]=rates[k]/rateTotal*100);
+   let rounded={}, sum=0;
+   let arr=Object.keys(raw).map(k=>[k,Math.floor(raw[k]),raw[k]%1]).sort((a,b)=>b[2]-a[2]);
+   arr.forEach(x=>{rounded[x[0]]=x[1];sum+=x[1]});
+   for(let j=0;j<100-sum;j++)rounded[arr[j%arr.length][0]]++;
+   pct=rounded;
+ }
+ showResult(pct,scores,maxima,rates);
+}
+function showResult(pct,scores,maxima,rates){
+ document.getElementById("quiz").classList.add("hidden");document.getElementById("result").classList.remove("hidden");
+ let order=Object.keys(pct).sort((a,b)=>pct[b]-pct[a]);
+ document.getElementById("bars").innerHTML=order.map(k=>`<div class="barrow"><b>${info[k].name}</b><div class="bar"><div class="fill" style="width:${pct[k]}%;background:${info[k].color}"></div></div><b>${pct[k]} %</b></div>`).join("");
+ let top=order[0], second=order[1], diff=pct[top]-pct[second];
+ let s = diff<=5
+ ? `<h3>Dein Profil ist relativ ausgewogen zwischen ${info[top].name} und ${info[second].name}.</h3><p>Deine Antworten weisen auf mehrere ähnlich starke Farbanteile hin. Je nach Situation können daher unterschiedliche Bedürfnisse und Verhaltensweisen bei dir in den Vordergrund treten.</p>`
+ : `<h3>Deine stärkste Farbe in diesem Selbstcheck: ${info[top].name}</h3><p>Das bedeutet nicht, dass du „dieser Typ“ bist. Es zeigt lediglich, dass Aussagen aus diesem Bereich in deinen Antworten besonders häufig Zustimmung erhalten haben. Deine zweitstärkste Farbe ist <b>${info[second].name}</b>.</p>`;
+ let low=order[order.length-1];
+ s += `<div class="callout" style="margin-top:16px"><b>Ein besonders interessanter Blick: ${info[low].name} (${pct[low]} %)</b><br>Ein niedrigerer Anteil ist kein Defizit. Gerade diese Farbe kann für deinen Perspektivwechsel besonders wertvoll sein. Bedürfnisse, die für Menschen mit dieser Farbe wichtig sind, sind für dich möglicherweise weniger selbstverständlich. Versuche deshalb, sie bei anderen bewusst wahrzunehmen und anzuerkennen.</div>`;
+ document.getElementById("summary").innerHTML=s;
+ document.getElementById("personal").innerHTML=order.map((k,idx)=>`<div class="type" style="margin-bottom:12px;border-left:6px solid ${info[k].color}">
+ <h3>${idx===0?"Besonders sichtbar: ":""}${info[k].name} – ${pct[k]} %</h3>
+ <p><b>Mögliche Motivation:</b> ${info[k].mot}.</p>
+ <p><b>Was dir in dieser Tendenz helfen kann:</b> ${info[k].need}.</p>
+ <p><b>Mögliche Ängste/Unsicherheiten:</b> ${info[k].fear}.</p>
+ <p><b>Typische Frustrationsquellen:</b> ${info[k].frust}.</p>
+ <p><b>Mögliche Stärke:</b> ${info[k].strength}</p></div>`).join("");
+ document.getElementById("alltypes").innerHTML=["D","I","S","G"].map(k=>`<div class="type" style="border-top:6px solid ${info[k].color}">
+ <h3>${info[k].name}</h3><p><b>Motiviert durch:</b> ${info[k].mot}.</p><p><b>Braucht häufig:</b> ${info[k].need}.</p>
+ <p><b>Kann frustriert reagieren auf:</b> ${info[k].frust}.</p><p><b>Als Trainer:in:</b> ${info[k].learn}</p></div>`).join("");
+ window.scrollTo(0,0);
+}
+</script>
+</body></html>
